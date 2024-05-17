@@ -19,6 +19,7 @@ with open("requirements.txt", "r") as file:
 NAME = "pytai"
 DESCRIPTION = "A useful 0-Shot AI in the terminal"
 EMAIL = "protik09@users.noreply.github.com"
+URL = "https://github.com/protik09/terminal-ai"
 AUTHOR = "Protik Banerji"
 REQUIRES_PYTHON = ">=3.10.0"
 
