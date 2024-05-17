@@ -52,7 +52,7 @@ def main():
     client = Groq(api_key=authGroq())
     system_prompt = "You are an AI agent called TermAI. You will reply succinctly to any input you receive. \
         Your replies will be in the Github Markdown format. ALWAYS start your replies with '[TermAI]: ' \
-        If providing code snippets always ensure code highlighting for the appropriate programming language \
+        If providing code snippets, always ensure code highlighting for the appropriate programming language \
         is applied."
 
     # Send the request to the GROQ API

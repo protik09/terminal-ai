@@ -7,13 +7,13 @@ A Python application that takes user input in the terminal, sends it to Groq AI,
 To use this application, simply run the following command in your terminal:
 
 ```bash
-pytai <query>
+protai <query>
 ```
 
 For example:
 
 ```bash
-pytai What is the capital of France?
+protai What is the capital of France?
 ```
 
 Then, enter your input in the terminal, and the application will send it to Groq AI and print the output to the terminal.

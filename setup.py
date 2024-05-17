@@ -16,7 +16,7 @@ with open("requirements.txt", "r") as file:
     requirements = file.read().splitlines()
 
 # Package meta-data.
-NAME = "pytai"
+NAME = "protai"
 DESCRIPTION = "A useful 0-Shot AI in the terminal"
 EMAIL = "protik09@users.noreply.github.com"
 URL = "https://github.com/protik09/terminal-ai"
@@ -25,7 +25,7 @@ REQUIRES_PYTHON = ">=3.10.0"
 
 # Attempt to read the version from VERSION file
 version_file_path = os.path.join(
-    os.path.abspath(os.path.dirname(__file__)), "pytai", "VERSION"
+    os.path.abspath(os.path.dirname(__file__)), "protai", "VERSION"
 )
 try:
     with open(version_file_path, "r") as version_file:
@@ -86,8 +86,8 @@ class UploadCommand(Command):
         os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
 
         self.status("Uploading the package to PyPI via Twine…")
-        # os.system("twine upload dist/*")  # Upload directly to main PyPi
-        os.system("twine upload --repository testpypi dist/*")  # Upload to test PyPi
+        os.system("twine upload dist/*")  # Upload directly to main PyPi
+        # os.system("twine upload --repository testpypi dist/*")  # Upload to test PyPi
 
         self.status("Pushing git tags…")
         os.system("git tag v{0}".format(VERSION))
@@ -109,13 +109,13 @@ setup(
     url=URL,
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     entry_points={
-        "console_scripts": ["pytai=pytai.pytai:main"],
+        "console_scripts": ["protai=protai.protai:main"],
     },
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,
     package_data={
-        "pytai": ["VERSION"],  # Include the VERSION file
+        "protai": ["VERSION"],  # Include the VERSION file
     },
     license="MIT",
     classifiers=[
