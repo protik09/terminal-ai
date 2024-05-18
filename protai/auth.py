@@ -12,13 +12,20 @@ import maskpass
 import re
 
 
-KEYRING_SYSTEM = "groq"
-KEYRING_USER = "api-key"
+KEYRING_SYSTEM: str = "groq"
+KEYRING_USER: str = "api-key"
+KEYRING_FLAG: bool = False
 
 
 def _getPasswordKeyring() -> str:
     """Get password from keyring"""
-    password: str = keyring.get_password(KEYRING_SYSTEM, KEYRING_USER)
+    password: str = None
+    try:
+        password: str = keyring.get_password(KEYRING_SYSTEM, KEYRING_USER)
+        global KEYRING_FLAG
+        KEYRING_FLAG = True  # Keyring is available
+    except keyring.errors.NoKeyringError:  # If keyring is not available
+        print("[KeyringError]: Keyring is not available")
     return password
 
 
@@ -58,10 +65,13 @@ def authGroq() -> str:
     elif _getPasswordKeyring() is None:  # If password is not stored in keyring
         # Get password from user
         api_key = maskpass.askpass("Enter GROQ API Key: ")  # Mask password
-        # Store password in keyring
-        keyring.set_password(
-            KEYRING_SYSTEM, KEYRING_USER, api_key
-        )  # Store password in keyring
+        if KEYRING_FLAG:  # If keyring is available
+            # Store password in keyring
+            keyring.set_password(
+                KEYRING_SYSTEM, KEYRING_USER, api_key
+            )
+        else:  # If keyring is not available
+            os.environ["GROQ_API_KEY"] = api_key  # Store password in environment
     else:  # If password is stored in keyring
         api_key = _getPasswordKeyring()  # Get password from keyring
         # print("[DEBUG]: GROQ_API_KEY is not set as an environment variable")
@@ -69,9 +79,13 @@ def authGroq() -> str:
     # Validate API key
     if not _validateApiKey(api_key):
         print("[KeyError]: Invalid API key. Please check your API key.")
-        # Delete key from keyring
-        keyring.delete_password(KEYRING_SYSTEM, KEYRING_USER)
-        return ""
+        try:
+            # Delete key from keyring
+            keyring.delete_password(KEYRING_SYSTEM, KEYRING_USER)
+        except keyring.errors.NoKeyringError:  # If keyring is not available
+            # Delete from os.environ
+            del os.environ["GROQ_API_KEY"]
+        return ""  # Returning an empty API will cause GROQ auth to fail
 
     return str(api_key)
 

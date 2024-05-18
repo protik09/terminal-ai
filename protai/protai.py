@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import sys
 import os
-import pathlib
 from rich import print
 from rich.markdown import Markdown
 from groq import Groq
