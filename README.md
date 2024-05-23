@@ -1,8 +1,14 @@
 # terminal-ai
 
-![PyPI - Version](https://img.shields.io/pypi/v/protai)
+![Python Language](https://img.shields.io/badge/Python-14354C?style=for-the-badge&logo=python&logoColor=white)
 
-A zero-shot AI assistant in the terminal, backended by GROQ AI, for blazing fast responses.
+![PyPI - Version](https://img.shields.io/pypi/v/protai) ![GitHub](https://img.shields.io/github/license/protik09/terminal-ai) ![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg) ![Issues Open](https://img.shields.io/github/issues/protik09/terminal-ai.svg)
+<!-- ![MintenanceNo](https://img.shields.io/badge/Maintained%3F-no-red.svg) -->
+
+![Powershell](https://img.shields.io/badge/powershell-5391FE?style=for-the-badge&logo=powershell&logoColor=white) ![Bash](https://img.shields.io/badge/GNU%20Bash-4EAA25?style=for-the-badge&logo=GNU%20Bash&logoColor=white) ![WinTerm](https://img.shields.io/badge/windows%20terminal-4D4D4D?style=for-the-badge&logo=windows%20terminal&logoColor=white)
+
+
+A zero-shot AI assistant in the terminal, backended by *GROQ AI*, for blazing fast responses.
 
 ## Installation
 
@@ -32,6 +38,8 @@ protai <query>
 > You need to have a _**valid Groq AI API key**_ to use this application.
 
 ## Development
+
+The *GROQ API* is using the _**llama3-8b-8192**_ model, as that has the fastest response time.
 
 If you wish to develop for this application, you can clone the repository and install the dependencies using the scripts given:
 
