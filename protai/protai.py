@@ -15,10 +15,10 @@ current_directory = os.path.abspath(os.path.dirname(__file__))
 version_file_path = os.path.join(current_directory, "VERSION")
 with open(version_file_path, "r") as f:
     try:
-        TERMAI_VERSION = f.read().strip()
-        # print(TERMAI_VERSION)
+        ProtAI_VERSION = f.read().strip()
+        # print(ProtAI_VERSION)
     except ValueError:
-        TERMAI_VERSION = "Invalid version number"
+        ProtAI_VERSION = "Invalid version number"
 
 
 def exitHandler(exit_code: int) -> None:
@@ -39,7 +39,7 @@ def main():
             print("Usage: termai <user input>")
             exitHandler(0)
         if args == "-v" or args == "--version":
-            print(f"{TERMAI_VERSION}")
+            print(f"{ProtAI_VERSION}")
             exitHandler(0)
         if args == "-c" or args == "--change":
             print("Change the API key for the GROQ API")
