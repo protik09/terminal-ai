@@ -1,6 +1,8 @@
 # terminal-ai
 
-A Python application that takes user input in the terminal, sends it to Groq AI, and prints the output to the terminal.
+![PyPI - Version](https://img.shields.io/pypi/v/protai)
+
+A zero-shot AI assistant in the terminal, backended by GROQ AI, for blazing fast responses.
 
 ## Usage
 
@@ -16,16 +18,41 @@ For example:
 protai What is the capital of France?
 ```
 
-Then, enter your input in the terminal, and the application will send it to Groq AI and print the output to the terminal.
+>[!Note]
+> On first run you will be prompted to enter your Groq AI API key. You can get one at [Groq AI website](https://console.groq.com/keys).
 
-## Requirements
+>[!IMPORTANT]
+> You need to have a valid Groq AI API key to use this application.
 
-* Python 3.10 or later
-* Groq AI API key (available at [Groq AI website](https://groq.ai))
+## Development
 
-## Contributing
+If you wish to develop for this application, you can clone the repository and install the dependencies using the scripts given:
+
+```bash
+git clone https://github.com/protik09/terminal-ai.git
+cd terminal-ai
+./activate_venv.sh
+```
+
+or
+
+```powershell
+git clone https://github.com/protik09/terminal-ai.git
+cd terminal-ai
+.\activate_venv.ps1
+```
+
+### Prerequisites
+
+>[!NOTE]
+>* Python 3.10 or later 🐍
+>* Groq AI API key (available at [Groq AI website](https://console.groq.com/keys))
+
+### Contributing
 
 Contributions are welcome! If you'd like to contribute to this application, please fork the repository and submit a pull request.
+>[!WARNING]
+> WSL2 is not supported for development. Please use a native Linux or Windows environment. There are issues with keyring access in WSL2.
 
 ## License
 
