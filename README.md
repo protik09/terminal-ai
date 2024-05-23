@@ -22,9 +22,8 @@ protai <query>
 
 *For example:*
 
-```bash
-protai What is the capital of France?
-```
+![ProtAI Demo](https://github.com/protik09/terminal-ai/blob/master/assets/protai_demo.jpeg?raw=true "ProtAI Demo")
+
 
 >[!Note]
 > On first run you will be prompted to enter your Groq AI API key. You can get one at the [**Groq AI website**](https://console.groq.com/keys).
