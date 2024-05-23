@@ -4,6 +4,14 @@
 
 A zero-shot AI assistant in the terminal, backended by GROQ AI, for blazing fast responses.
 
+## Installation
+
+To install protai, simply run the following command in your terminal:
+
+```bash
+pip install --upgrade protai
+```
+
 ## Usage
 
 To use this application, simply run the following command in your terminal:
@@ -12,17 +20,17 @@ To use this application, simply run the following command in your terminal:
 protai <query>
 ```
 
-For example:
+*For example:*
 
 ```bash
 protai What is the capital of France?
 ```
 
 >[!Note]
-> On first run you will be prompted to enter your Groq AI API key. You can get one at [Groq AI website](https://console.groq.com/keys).
+> On first run you will be prompted to enter your Groq AI API key. You can get one at the [**Groq AI website**](https://console.groq.com/keys).
 
 >[!IMPORTANT]
-> You need to have a valid Groq AI API key to use this application.
+> You need to have a _**valid Groq AI API key**_ to use this application.
 
 ## Development
 
