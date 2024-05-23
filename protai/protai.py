@@ -27,7 +27,7 @@ def exitHandler(exit_code: int) -> None:
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: termai <user input>")
+        print("Usage: protai <user input>")
         exitHandler(1)
 
     # user_input = urllib.parse.quote(sys.argv[1])  # Sanitize the user input
@@ -36,7 +36,7 @@ def main():
         if args == sys.argv[0]:
             continue
         if args == "-h" or args == "--help":
-            print("Usage: termai <user input>")
+            print("Usage: protai <user input>")
             exitHandler(0)
         if args == "-v" or args == "--version":
             print(f"{ProtAI_VERSION}")
@@ -49,8 +49,8 @@ def main():
 
     # Set the query parameters
     client = Groq(api_key=authGroq())
-    system_prompt = "You are an AI agent called TermAI. You will reply succinctly to any input you receive. \
-        Your replies will be in the Github Markdown format. ALWAYS start your replies with '[TermAI]: ' \
+    system_prompt = "You are an AI agent called ProtAI. You will reply succinctly to any input you receive. \
+        Your replies will be in the Github Markdown format. ALWAYS start your replies with '[ProtAI]: ' \
         If providing code snippets, always ensure code highlighting for the appropriate programming language \
         is applied."
 
