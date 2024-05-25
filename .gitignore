@@ -94,3 +94,4 @@ ipython_config.py
 
 # Don't export virtual environment
 .venv/
+.vscode/
