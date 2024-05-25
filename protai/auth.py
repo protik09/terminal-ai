@@ -7,14 +7,17 @@ Author: Protik Banerji <protik09@users.noreply.github.com>
 """
 
 import os
-import keyring
 import re
+import keyring
 import keyring.errors
+
+# This dependancy exists solely so I can give user feedback when typing in a masked password
 from prompt_toolkit import prompt
 
 KEYRING_SYSTEM: str = "groq"
 KEYRING_USER: str = "api-key"
-KEYRING_FLAG: bool = False
+API_KEY_MIN_SIZE: int = 30
+API_KEY_MAX_SIZE: int = 1024
 
 
 def _checkKeyringExists() -> bool:
@@ -24,12 +27,17 @@ def _checkKeyringExists() -> bool:
         keyring.get_keyring()  # Check if keyring is available
         keyring_exists = True
     except keyring.errors.NoKeyringError:  # If keyring is not available
-        print("[KeyringError]: Keyring is not available. You're probably running in WSL. ProtAI is not aupported in WSL")
+        print(
+            "[KeyringError]: Keyring is not available. You're probably running in WSL. \
+ProtAI is not aupported in WSL"
+        )
         exit(1)
     except keyring.errors.InitError:  # If keyring is not available
         print("[KeyringError]: Keyring initialization failed.")
+        exit(1)
     except keyring.errors.KeyringLocked:
         print("[KeyringError]: Keyring is locked.")
+        exit(1)
     return keyring_exists
 
 
@@ -41,6 +49,7 @@ def _getApiKeyFromKeyring() -> str:
             password: str = keyring.get_password(KEYRING_SYSTEM, KEYRING_USER)
         except keyring.errors.KeyringError as e:  # If keyring is not available
             print(f"[KeyringError]: {e}")
+            exit(1)
     return password
 
 
@@ -56,7 +65,13 @@ def _getApiKeyUser() -> str:
 
 def _validateApiKey(api_key: str) -> bool:
     """Validate API key"""
-    pattern = re.compile(r"^gsk_[a-zA-Z0-9]{30,1024}$")
+    pattern = re.compile(
+        r"^gsk_[a-zA-Z0-9]{"
+        + str(API_KEY_MIN_SIZE)
+        + r","
+        + str(API_KEY_MAX_SIZE)
+        + r"}$"  # ^gsk_[a-zA-Z0-9]{30,1024}$
+    )
     return bool(pattern.match(api_key))
 
 
@@ -65,17 +80,20 @@ def _deleteApiKey() -> None:
     if _checkKeyringExists():  # If keyring is available
         try:
             keyring.delete_password(KEYRING_SYSTEM, KEYRING_USER)
+        except keyring.errors.PasswordDeleteError:
+            print("[KeyringError]: Failed to delete password in keyring.")
+
+        try:
             del os.environ["GROQ_API_KEY"]
-        except (
-            KeyError,
-            keyring.errors.PasswordDeleteError,
-        ):
-            print(
-                "[KeyringError]: Failed to delete password in keyring or os.environ. \
-                    It's ok though you can still overwrite it."
-            )
+        except KeyError:
+            #             print(
+            #                 "[KeyringError]: Failed to delete password in os.environ. \
+            # It's ok though you can still overwrite it."
+            #             )
+            pass
     else:  # If keyring is not available
         print("[OsEnvError]: GROQ_API_KEY is not available.")
+    exit(0)
 
 
 def changeApiKey() -> int:

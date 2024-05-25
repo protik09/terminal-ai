@@ -1,6 +1,7 @@
-setuptools
-wheel
-groq
-rich
-keyring
-prompt-toolkit
+setuptools # Dependency to generate wheels and upload to PyPi
+wheel # Generate binaries from python code
+groq # AI API lib
+rich # Used for printing markdown to terminal
+keyring # Store your API keys in safety
+prompt-toolkit # Exists so we can use masked passwords that don't randomly break like maskpass
+yaspin # Terminal spinner toolkit
