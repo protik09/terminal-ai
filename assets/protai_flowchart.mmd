@@ -1,0 +1,70 @@
+graph TD
+    A[Start] --> B{Check arguments}
+    B -->|No arguments| C[Print usage and exit]
+    B -->|--help| D[Print usage and exit]
+    B -->|--version| E[Call versionHandler]
+    B -->|--change| F[Change API key and exit]
+    B -->|User input| G[Process user input]
+
+    G --> H[Authenticate with GROQ API]
+    H -->|Check Env Var| I{GROQ_API_KEY in env}
+    I -->|Yes| J[Use env API key]
+    I -->|No| K[Get API key from keyring]
+    K --> L{Keyring exists}
+    L -->|Yes| M[Use keyring API key]
+    L -->|No| N[Prompt user for API key]
+    N --> O[Validate user API key]
+    O -->|Valid| P[Store API key in keyring]
+    O -->|Invalid| Q[Print error and exit]
+    
+    H -->|Failure| S[Print error and exit] 
+    H -->|Success| R[Create Groq client]
+   
+
+    R --> T[Set system prompt]
+    T --> U[Display spinner Processing...]
+    U --> V{Send request to GROQ API}
+    V -->|Success| W[Get reply]
+    W --> X[Stop spinner successfully]
+    X --> Y[Print reply in Markdown]
+
+    V -->|Failure| Z[Stop spinner with failure]
+    Z --> AA[Print error and exit]
+
+    C --> AB[Exit]
+    D --> AB
+    E --> AB
+    F --> AB
+    S --> AB
+    Q --> AB
+    AA --> AB
+
+    %% Styling nodes
+    style A fill:#ffcccc,stroke:#333,stroke-width:2px
+    style B fill:#ffcc99,stroke:#333,stroke-width:2px
+    style C fill:#ffffcc,stroke:#333,stroke-width:2px
+    style D fill:#ffffcc,stroke:#333,stroke-width:2px
+    style E fill:#ccffcc,stroke:#333,stroke-width:2px
+    style F fill:#ccffcc,stroke:#333,stroke-width:2px
+    style G fill:#ffcc99,stroke:#333,stroke-width:2px
+    style H fill:#ffcc99,stroke:#333,stroke-width:2px
+    style I fill:#ffcc99,stroke:#333,stroke-width:2px
+    style J fill:#ccffff,stroke:#333,stroke-width:2px
+    style K fill:#ccffff,stroke:#333,stroke-width:2px
+    style L fill:#ffcc99,stroke:#333,stroke-width:2px
+    style M fill:#ccffff,stroke:#333,stroke-width:2px
+    style N fill:#ccffcc,stroke:#333,stroke-width:2px
+    style O fill:#ccffcc,stroke:#333,stroke-width:2px
+    style P fill:#ccffcc,stroke:#333,stroke-width:2px
+    style Q fill:#ffcccc,stroke:#333,stroke-width:2px
+    style R fill:#ccffff,stroke:#333,stroke-width:2px
+    style S fill:#ffcccc,stroke:#333,stroke-width:2px
+    style T fill:#ccffff,stroke:#333,stroke-width:2px
+    style U fill:#ccffff,stroke:#333,stroke-width:2px
+    style V fill:#ccffff,stroke:#333,stroke-width:2px
+    style W fill:#ccffff,stroke:#333,stroke-width:2px
+    style X fill:#ccffcc,stroke:#333,stroke-width:2px
+    style Y fill:#ccffcc,stroke:#333,stroke-width:2px
+    style Z fill:#ffcccc,stroke:#333,stroke-width:2px
+    style AA fill:#ffcccc,stroke:#333,stroke-width:2px
+    style AB fill:#ffcccc,stroke:#333,stroke-width:2px
