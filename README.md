@@ -31,6 +31,7 @@ protai <query>
 ![ProtAI Demo](https://github.com/protik09/terminal-ai/blob/master/assets/protai_demo.jpeg?raw=true "ProtAI Demo")
 
 
+
 >[!Note]
 > On first run you will be prompted to enter your Groq AI API key. You can get one at the [**Groq AI website**](https://console.groq.com/keys).
 
@@ -56,6 +57,15 @@ git clone https://github.com/protik09/terminal-ai.git
 cd terminal-ai
 .\activate_venv.ps1
 ```
+
+To generate the wheel and upload to PyPI, we use the following command:
+
+```bash
+python setup.py upload
+```
+
+> [!IMPORTANT]
+> Only the current maintainer has access to the [**PyPI**](https://pypi.org/project/protai/) repository API key. If you wish to contribute, please fork the repository and submit a pull request.
 
 ### Prerequisites
 
