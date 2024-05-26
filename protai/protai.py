@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
 import os
+import argparse
 from rich import print
 from rich.markdown import Markdown
 from groq import Groq, GroqError
@@ -34,24 +35,28 @@ def exitHandler(exit_code: int) -> None:
 
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: protai <user input>")
-        exitHandler(1)
+    parser = argparse.ArgumentParser(description="protai")
+    parser.add_argument("user_input", nargs="*", help="User input")
+    parser.add_argument("-v", "--version", action="store_true", help="Show the version")
+    parser.add_argument(
+        "-c",
+        "--change",
+        action="store_true",
+        help="Change the API key for the GROQ API",
+    )
 
-    # user_input = urllib.parse.quote(sys.argv[1])  # Sanitize the user input
-    user_input = ""
-    for args in sys.argv:
-        if args == sys.argv[0]:
-            continue
-        if args == "-h" or args == "--help":
-            print("Usage: protai <user input>")
-            exitHandler(0)
-        if args == "-v" or args == "--version":
-            versionHandler()
-        if args == "-c" or args == "--change":
-            print("Change the API key for the GROQ API")
-            exitHandler(changeApiKey())
-        user_input += str(args) + " "
+    args = parser.parse_args()
+
+    if not args.version and not args.change and len(sys.argv) < 2:
+        print("Usage: protai <user input>")
+        exitHandler(0)
+    elif args.version:
+        versionHandler()
+    elif args.change:
+        print("Change the API key for the GROQ API")
+        exitHandler(changeApiKey())
+    else:
+        user_input = " ".join(args.user_input)
     # print(f"[DEBUG] User input is: {user_input}")
 
     # Set the query parameters
@@ -77,7 +82,7 @@ def main():
             )
             reply = chat_completion.choices[0].message.content
             spinner.ok("[✔ ]")  # mark spinner as finished successfully
-            # Print the reply in Markdown
+            # Print the reply in Markdown overwriting the spinner
             print(Markdown(str("\033[F" + reply)))
         except Exception as e:
             spinner.fail("[✖ ] Processing Failed...")  # mark spinner as failed
