@@ -7,6 +7,7 @@ from rich.markdown import Markdown
 from groq import Groq, GroqError
 from auth import authGroq, changeApiKey
 from yaspin import yaspin
+from protai import __version__  # Import the version
 
 
 # Set your GROQ API endpoint URL
@@ -15,17 +16,7 @@ GROQ_API_URL = "https://api.groq.io/v1/query"
 
 def versionHandler() -> None:
     """Print the version number of ProtAI."""
-    # Get the absolute path of the current directory
-    current_directory = os.path.abspath(os.path.dirname(__file__))
-    # Construct the absolute path for the VERSION file
-    version_file_path = os.path.join(current_directory, "VERSION")
-    with open(version_file_path, "r") as f:
-        try:
-            ProtAI_VERSION = f.read().strip()
-            # print(ProtAI_VERSION)
-        except ValueError:
-            ProtAI_VERSION = "Invalid version number"
-    print(f"{ProtAI_VERSION}")
+    print(__version__)
     exitHandler(0)
 
 

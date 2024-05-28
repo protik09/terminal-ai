@@ -27,12 +27,20 @@ REQUIRES_PYTHON = ">=3.10.0"
 version_file_path = os.path.join(
     os.path.abspath(os.path.dirname(__file__)), "protai", "VERSION"
 )
-try:
-    with open(version_file_path, "r") as version_file:
-        VERSION = version_file.read().strip()
-except FileNotFoundError:
-    VERSION = "0.0.0"  # Default version if VERSION file is not found
+default_version = "0.0.0"
 
+
+def read_version(version_file_path) -> str:
+    try:
+        with open(version_file_path, "r") as version_file:
+            return version_file.read().strip()
+    except FileNotFoundError:
+        return default_version  # Default version if not found
+    except Exception:
+        return default_version
+
+
+VERSION = read_version(version_file_path)
 
 # What packages are required for this module to be executed?
 REQUIRED = requirements

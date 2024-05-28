@@ -7,6 +7,7 @@
 
 ![Powershell](https://img.shields.io/badge/powershell-5391FE?style=for-the-badge&logo=powershell&logoColor=white) ![Bash](https://img.shields.io/badge/GNU%20Bash-4EAA25?style=for-the-badge&logo=GNU%20Bash&logoColor=white) ![WinTerm](https://img.shields.io/badge/windows%20terminal-4D4D4D?style=for-the-badge&logo=windows%20terminal&logoColor=white)
 
+<!-- ![ProtAI Logo](assets/protai_logo.jpg) -->
 
 A zero-shot AI assistant in the terminal, backended by the *GROQ AI*, for blazing fast responses. The **free** API key from *GROQ* can be obtained [here](https://console.groq.com/keys)
 
