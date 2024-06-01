@@ -4,6 +4,7 @@ import sys
 import argparse
 from rich import print
 from rich.markdown import Markdown
+
 # from groq import Groq, GroqError
 from mygroq import Groq, GroqError
 from auth import authGroq, changeApiKey, deleteApiKey
@@ -108,6 +109,7 @@ def main():
 
 if __name__ == "__main__":
     from time import time_ns
+
     start_time = time_ns()
     main()
     end_time = time_ns()
