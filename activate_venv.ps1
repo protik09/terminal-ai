@@ -10,7 +10,7 @@ Get-ChildItem -Path $FOLDER_HOME -Recurse -Directory | ForEach-Object {
         Write-Host "Python venv found in $folder"
         Set-Location $folder
         # Check if running in PowerShell
-        if ($Host.Name -eq "ConsoleHost") {
+        if ($Host.Name -eq "ConsoleHost" -or $Host.Name -eq "Visual Studio Code Host") {
             # Write-Host "Running PowerShell script"
             .\Activate.ps1
             Set-Location $FOLDER_HOME
