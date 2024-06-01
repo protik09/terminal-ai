@@ -13,6 +13,7 @@ import keyring.errors
 
 # This dependancy exists solely so I can give user feedback when typing in a masked password
 from prompt_toolkit import prompt
+from texteffects import printBanner, successString, errorString
 
 KEYRING_SYSTEM: str = "groq"
 KEYRING_USER: str = "api-key"
@@ -41,12 +42,12 @@ ProtAI is not aupported in WSL"
     return keyring_exists
 
 
-def _getApiKeyFromKeyring() -> str:
+def _getApiKeyFromKeyring() -> str | None:
     """Get password from keyring"""
-    password: str = None
+    password: str | None = None
     if _checkKeyringExists():  # If keyring is available
         try:
-            password: str = keyring.get_password(KEYRING_SYSTEM, KEYRING_USER)
+            password = keyring.get_password(KEYRING_SYSTEM, KEYRING_USER)
         except keyring.errors.KeyringError as e:  # If keyring is not available
             print(f"[KeyringError]: {e}")
             exit(1)
@@ -63,36 +64,39 @@ def _getApiKeyUser() -> str:
     return api_key
 
 
-def _validateApiKey(api_key: str) -> bool:
+def _validateApiKey(api_key: str | None) -> bool:
     """Validate API key"""
+    if api_key is None:
+        return False
     pattern = re.compile(
         r"^gsk_[a-zA-Z0-9]{"
         + str(API_KEY_MIN_SIZE)
         + r","
         + str(API_KEY_MAX_SIZE)
-        + r"}$"  # ^gsk_[a-zA-Z0-9]{30,1024}$
+        + r"}$"  # regex "^gsk_[a-zA-Z0-9]{30,1024}$"
     )
     return bool(pattern.match(api_key))
 
 
-def _deleteApiKey() -> None:
+def deleteApiKey() -> None:
     """Delete API key from keyring and environment variable"""
     if _checkKeyringExists():  # If keyring is available
         try:
             keyring.delete_password(KEYRING_SYSTEM, KEYRING_USER)
         except keyring.errors.PasswordDeleteError:
-            print("[KeyringError]: Failed to delete password in keyring.")
+            print(errorString("[KeyringError]: No such password in keyring."))
 
         try:
             del os.environ["GROQ_API_KEY"]
         except KeyError:
             #             print(
             #                 "[KeyringError]: Failed to delete password in os.environ. \
-            # It's ok though you can still overwrite it."
-            #             )
+            # It's ok though you can still overwrite it." )
             pass
+        print(successString("API key deleted"))
     else:  # If keyring is not available
-        print("[OsEnvError]: GROQ_API_KEY is not available.")
+        print(errorString("[OsEnvError]: GROQ_API_KEY is not available."))
+
     exit(0)
 
 
@@ -100,7 +104,7 @@ def changeApiKey() -> int:
     """Change API key"""
     error_code = 0
     # Delete key from keyring
-    _deleteApiKey()
+    deleteApiKey()
     # Ask user for password
     api_key = _getApiKeyUser()
 
@@ -114,7 +118,7 @@ def changeApiKey() -> int:
     return error_code
 
 
-def authGroq() -> str:
+def authGroq() -> str | None:
     """Get API key either from Environment Variable or Keyring"""
     api_key = None
 
@@ -128,6 +132,8 @@ def authGroq() -> str:
             del os.environ["GROQ_API_KEY"]  # Delete key from environment
             api_key = None
     elif _getApiKeyFromKeyring() is None:  # If password is not stored in keyring
+        # Looks like its probably the first time you're running the program
+        printBanner()
         # Get password from user
         api_key = _getApiKeyUser()
         # print(f"[DEBUG]: Entered API key length: {len(api_key)}")  # Debugging info
@@ -137,12 +143,12 @@ def authGroq() -> str:
         except keyring.errors.PasswordSetError:
             print("[KeyringError]: Failed to set password in keyring")
     else:  # If password is stored in keyring
-        api_key = _getApiKeyFromKeyring()  # Get password from keyring
+        api_key = _getApiKeyFromKeyring()
 
     # Validate API key
     if not _validateApiKey(api_key):
         print("[KeyError]: Invalid API key. Please check your API key.")
-        _deleteApiKey()  # Delete API key from keyring and environment variable
+        deleteApiKey()
         api_key = None
     else:  # It is a valid API Key
         pass

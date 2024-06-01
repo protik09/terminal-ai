@@ -46,7 +46,7 @@ VERSION = read_version(version_file_path)
 REQUIRED = requirements
 
 # What packages are optional?
-EXTRAS = {
+EXTRAS: dict = {
     # 'fancy feature': ['django'],
 }
 
@@ -70,7 +70,7 @@ class UploadCommand(Command):
     """Support setup.py upload."""
 
     description = "Build and publish the package."
-    user_options = []
+    # user_options = []
 
     @staticmethod
     def status(s):
