@@ -1,7 +1,9 @@
 setuptools # Dependency to generate wheels and upload to PyPi
 wheel # Generate binaries from python code
-groq # AI API lib
+# groq # AI API lib
 rich # Used for printing markdown to terminal
 keyring # Store your API keys in safety
 prompt-toolkit # Exists so we can use masked passwords that don't randomly break like maskpass
 yaspin # Terminal spinner toolkit
+requests # Used to make API calls and replace the groq library which uses httpx
+orjson # Used to parse the json response from the API

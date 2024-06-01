@@ -4,7 +4,8 @@ import sys
 import argparse
 from rich import print
 from rich.markdown import Markdown
-from groq import Groq, GroqError
+# from groq import Groq, GroqError
+from mygroq import Groq, GroqError
 from auth import authGroq, changeApiKey, deleteApiKey
 from yaspin import yaspin
 from __init__ import __version__  # noqa: F401
@@ -25,19 +26,29 @@ def exitHandler(exit_code: int) -> None:
     sys.exit(exit_code)
 
 
+# def chatCompletionHandler(
+#     client: Groq, system_prompt: str, user_input: str
+# ) -> str | None:
+#     """Handle the chat completion request."""
+#     # Send the request to the GROQ API
+#     chat_completion = client.chat.completions.create(
+#         messages=[
+#             {"role": "system", "content": system_prompt},
+#             {"role": "user", "content": user_input},
+#         ],
+#         model="llama3-8b-8192",
+#     )
+#     reply: str | None = chat_completion.choices[0].message.content
+#     return reply
+
+
 def chatCompletionHandler(
     client: Groq, system_prompt: str, user_input: str
 ) -> str | None:
     """Handle the chat completion request."""
     # Send the request to the GROQ API
-    chat_completion = client.chat.completions.create(
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_input},
-        ],
-        model="llama3-8b-8192",
-    )
-    reply: str | None = chat_completion.choices[0].message.content
+    chat_completion = client.chat(system_prompt, user_input, model="llama3-8b-8192")
+    reply: str | None = chat_completion
     return reply
 
 
@@ -85,19 +96,19 @@ def main():
     with yaspin(text="Processing...", color="green") as spinner:
         try:
             reply: str | None = chatCompletionHandler(client, system_prompt, user_input)
-            spinner.ok("[✔]")  # mark spinner as finished successfully
+            spinner.ok("[ ✔ ]")  # mark spinner as finished successfully
             # Print the reply in Markdown overwriting the spinner
             print(Markdown("\033[F" + str(reply) + "\n"))
             # print(Markdown(reply))
         except Exception as e:
-            spinner.fail("[✖] Processing Failed...")  # mark spinner as failed
+            spinner.fail("[ ✖ ] Processing Failed...")  # mark spinner as failed
             print(f"\nAn error occurred: {e}\n")
             exitHandler(1)
 
 
 if __name__ == "__main__":
-    # from time import time_ns
-    # start_time = time_ns()
+    from time import time_ns
+    start_time = time_ns()
     main()
-    # end_time = time_ns()
-    # print(f"\n\n\nGROQ Time taken: {(end_time - start_time)/1000000:.4f}ms\n\n\n")
+    end_time = time_ns()
+    print(f"\n\n\nGROQ Time taken: {(end_time - start_time)/1000000:.4f}ms\n\n\n")
