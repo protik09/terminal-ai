@@ -57,6 +57,7 @@ def _getApiKeyFromKeyring() -> str | None:
 def _getApiKeyUser() -> str:
     """Get API key from user"""
     try:
+        print("The FREE API key from GROQ can be obtained at [Groq AI website](https://console.groq.com/keys)")
         api_key = prompt("Enter GROQ API Key: ", is_password=True)
     except KeyboardInterrupt:
         print("KeyboardInterrupt: Exiting...")
