@@ -124,8 +124,8 @@ def argParser() -> tuple[Optional[str], argparse.Namespace]:
     _user_input: Optional[str] = None
 
     if not args.version and not args.change and len(sys.argv) < 2:
-        print("Usage: protai <user input> -> For Single line input")
-        print("Usage: protai -i -> For Interactive mode")
+        print(f"{os.linesep}Usage: protai <user input> -> For Single line input")
+        print(f"Usage: protai -i -> For Interactive mode{os.linesep}")
         exitHandler(0)
     elif args.version:
         versionHandler()
