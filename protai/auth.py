@@ -20,6 +20,10 @@ KEYRING_USER: str = "api-key"
 API_KEY_MIN_SIZE: int = 30
 API_KEY_MAX_SIZE: int = 1024
 
+def _version() -> None:
+    """Check version of ProtAI"""
+    from __init__ import __version__
+    print(f"\nVersion: {__version__}\n")
 
 def _checkKeyringExists() -> bool:
     """Check if keyring exists"""
@@ -98,7 +102,7 @@ def deleteApiKey() -> None:
     else:  # If keyring is not available
         print(errorString("[OsEnvError]: GROQ_API_KEY is not available."))
 
-    exit(0)
+    exit(0) # TODO: Add error returnj codes.
 
 
 def changeApiKey() -> int:
@@ -135,6 +139,7 @@ def authGroq() -> str | None:
     elif _getApiKeyFromKeyring() is None:  # If password is not stored in keyring
         # Looks like its probably the first time you're running the program
         printBanner()
+        _version()
         # Get password from user
         api_key = _getApiKeyUser()
         # print(f"[DEBUG]: Entered API key length: {len(api_key)}")  # Debugging info
