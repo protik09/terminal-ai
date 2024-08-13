@@ -20,6 +20,10 @@ from ismarkdown import isMarkdown
 # Set your GROQ API endpoint URL
 GROQ_API_URL: str = "https://api.groq.io/v1/query"
 
+# Models to use
+INSTANT_MODEL = "llama-3.1-8b-instant"
+VERSATILE_MODEL = "llama-3.1-70b-versatile"
+
 SYSTEM_PROMPT: str = (
     "You are an AI agent called ProtAI. You will reply succinctly to any input you receive. \
     Your replies will be in the Standard Markdown format. ALWAYS start your replies with '[ProtAI]: ' \
@@ -54,14 +58,41 @@ def exitHandler(exit_code: int) -> None:
 #             {"role": "system", "content": system_prompt},
 #             {"role": "user", "content": user_input},
 #         ],
-#         model="llama3-8b-8192",
+#         model=INSTANT_MODEL,
 #     )
 #     reply: str | None = chat_completion.choices[0].message.content
 #     return reply
 
+def checkForUpdate() -> None:
+    """Check if the current version is the latest."""
+    import requests
+    repo_owner = "protik09"
+    repo_name = "terminal-ai"
+    url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/tags"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        tags = response.json()
+        if tags:
+            latest_version = tags[0]["name"]
+            if latest_version != __version__:
+                print(
+                    f"{os.linesep}[ProtAI]: A new version ({latest_version}) is available. You are using version {__version__}.{os.linesep}"
+                )
+            else:
+                print(
+                    f"{os.linesep}[ProtAI]: You are using the latest version ({__version__}).{os.linesep}"
+                )
+        else:
+            print(
+                f"{os.linesep}[ProtAI]: Could not determine the latest version.{os.linesep}"
+            )
+    except requests.RequestException as e:
+        print(f"{os.linesep}[ProtAI]: Failed to check for updates: {e}{os.linesep}")
+
 
 def chatCompletionHandler(
-    client: Groq, system_prompt: str, user_input: str, model: str = "llama3-8b-8192"
+    client: Groq, system_prompt: str, user_input: str, model: str = INSTANT_MODEL
 ) -> str | None:
     """Handle the chat completion request."""
     # Send the request to the GROQ API
@@ -166,11 +197,12 @@ def main():
                         os.system(
                             "cls" if os.name == "nt" else "clear"
                         )  # Yeah yeah I know DRY!!
+                        user_input = 'clear'
                     case _:
                         pass
                 # Send everything else to the chat completion
                 reply: str | None = chatCompletionHandler(
-                    client, SYSTEM_PROMPT, user_input, model="llama3-70b-8192"
+                    client, SYSTEM_PROMPT, user_input, model = VERSATILE_MODEL
                 )
                 printReply(reply)
                 # printTokens(user_input, reply)
