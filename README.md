@@ -41,7 +41,8 @@ protai <query>
 
 ## Development
 
-The *GROQ API* is using the _**llama3-8b-8192**_ model, as that has the fastest response time.
+The application is using the _**llama-3.1-8b-instant**_ model for its instant inference, as that has the fastest response time.
+The interactive version is using the  **llama-3.3-70b-versatile** for its 0-shot inference.
 
 If you wish to develop for this application, you can clone the repository and install the dependencies using the scripts given:
 

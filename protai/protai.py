@@ -22,7 +22,7 @@ GROQ_API_URL: str = "https://api.groq.io/v1/query"
 
 # Models to use
 INSTANT_MODEL = "llama-3.1-8b-instant"
-VERSATILE_MODEL = "llama-3.1-70b-versatile"
+INTERACTIVE_MODEL = "llama-3.3-70b-versatile"
 
 SYSTEM_PROMPT: str = (
     "You are an AI agent called ProtAI. You will reply succinctly to any input you receive. \
@@ -63,9 +63,11 @@ def exitHandler(exit_code: int) -> None:
 #     reply: str | None = chat_completion.choices[0].message.content
 #     return reply
 
+
 def checkForUpdate() -> None:
     """Check if the current version is the latest."""
     import requests
+
     repo_owner = "protik09"
     repo_name = "terminal-ai"
     url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/tags"
@@ -197,12 +199,12 @@ def main():
                         os.system(
                             "cls" if os.name == "nt" else "clear"
                         )  # Yeah yeah I know DRY!!
-                        user_input = 'clear'
+                        user_input = "clear"
                     case _:
                         pass
                 # Send everything else to the chat completion
                 reply: str | None = chatCompletionHandler(
-                    client, SYSTEM_PROMPT, user_input, model = VERSATILE_MODEL
+                    SYSTEM_PROMPT, user_input, model=INTERACTIVE_MODEL
                 )
                 printReply(reply)
                 # printTokens(user_input, reply)
@@ -227,7 +229,7 @@ def main():
             )
             exitHandler(0)
         else:
-            print("{}[ProtAI]: Exiting.....{}".format(os.linesep*2, os.linesep))
+            print("{}[ProtAI]: Exiting.....{}".format(os.linesep * 2, os.linesep))
             exitHandler(0)
     except Exception as e:
         print(f"{os.linesep}An error occurred: {e}{os.linesep}")
