@@ -204,7 +204,7 @@ def main():
                         pass
                 # Send everything else to the chat completion
                 reply: str | None = chatCompletionHandler(
-                    SYSTEM_PROMPT, user_input, model=INTERACTIVE_MODEL
+                    client, SYSTEM_PROMPT, user_input, model=INTERACTIVE_MODEL
                 )
                 printReply(reply)
                 # printTokens(user_input, reply)
