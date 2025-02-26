@@ -21,8 +21,8 @@ from ismarkdown import isMarkdown
 GROQ_API_URL: str = "https://api.groq.io/v1/query"
 
 # Models to use
-INSTANT_MODEL = "llama-3.1-8b-instant"
-INTERACTIVE_MODEL = "llama-3.3-70b-versatile"
+INSTANT_MODEL = "llama-3.3-70b-versatile"
+INTERACTIVE_MODEL = "deepseek-r1-distill-llama-70b-specdec"
 
 SYSTEM_PROMPT: str = (
     "You are an AI agent called ProtAI. You will reply succinctly to any input you receive. \
