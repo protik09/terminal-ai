@@ -22,7 +22,7 @@ GROQ_API_URL: str = "https://api.groq.io/v1/query"
 
 # Models to use
 INSTANT_MODEL = "llama-3.3-70b-versatile"
-INTERACTIVE_MODEL = "deepseek-r1-distill-llama-70b-specdec"
+INTERACTIVE_MODEL = "openai/gpt-oss-120b"
 
 SYSTEM_PROMPT: str = (
     "You are an AI agent called ProtAI. You will reply succinctly to any input you receive. \
@@ -41,6 +41,26 @@ def versionHandler() -> None:
     """Print the version number of ProtAI."""
     print(__version__)
     exitHandler(0)
+
+def check_for_updates() -> None:
+    """Check if a newer version is available on GitHub."""
+    import requests
+    try:
+        response = requests.get(
+            "https://api.github.com/repos/protik09/terminal-ai/tags"
+        )
+        response.raise_for_status()
+        latest_tag = response.json()[0]["name"].lstrip("v")
+
+        if latest_tag > __version__:
+            print(
+                f"[ProtAI]: Update available! Current: v{__version__}, Latest: v{latest_tag}"
+            )
+            print("[ProtAI]: Run 'pip install --upgrade protai' to update")
+        else:
+            print(f"[ProtAI]: Running latest version (v{__version__})")
+    except Exception as e:
+        print(f"[ProtAI]: Failed to check for updates: {e}")
 
 
 def exitHandler(exit_code: int) -> None:
