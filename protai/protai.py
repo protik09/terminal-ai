@@ -22,7 +22,7 @@ GROQ_API_URL: str = "https://api.groq.io/v1/query"
 
 # Models to use
 INSTANT_MODEL = "llama-3.3-70b-versatile"
-INTERACTIVE_MODEL = "deepseek-r1-distill-llama-70b-specdec"
+INTERACTIVE_MODEL = "openai/gpt-oss-120b"
 
 SYSTEM_PROMPT: str = (
     "You are an AI agent called ProtAI. You will reply succinctly to any input you receive. \
@@ -63,8 +63,56 @@ def check_for_updates() -> None:
         print(f"[ProtAI]: Failed to check for updates: {e}")
 
 
-def exitHandler(exit_code: int) -> None:
-    """TODO: Write more comprehensive exit handler when inspiration strikes."""
+def exitHandler(exit_code: int, message: str = None, show_timing: bool = False) -> None:
+    """
+    Comprehensive exit handler that provides graceful shutdown with contextual messaging.
+    
+    Args:
+        exit_code (int): The exit code to use (0 for success, non-zero for errors)
+        message (str, optional): Custom exit message to display
+        show_timing (bool): Whether to show timing information (for main execution)
+    """
+    from texteffects import successString, errorString, warningString
+    
+    # Default messages based on exit code
+    if message is None:
+        if exit_code == 0:
+            message = "ProtAI completed successfully"
+        elif exit_code == 1:
+            message = "ProtAI encountered an error"
+        elif exit_code == 130:  # SIGINT (Ctrl+C)
+            message = "ProtAI interrupted by user"
+        else:
+            message = f"ProtAI exited with code {exit_code}"
+    
+    # Display appropriate exit message with formatting
+    if exit_code == 0:
+        print(f"{os.linesep}{successString(message)}{os.linesep}")
+    elif exit_code in [1, 2]:  # Error codes
+        print(f"{os.linesep}{errorString(message)}{os.linesep}")
+    else:  # Other codes (warnings, interruptions, etc.)
+        print(f"{os.linesep}{warningString(message)}{os.linesep}")
+    
+    # Show timing information if requested (mainly for main execution completion)
+    if show_timing:
+        try:
+            # Try to get timing info if available in global scope
+            from time import time_ns
+            if 'start_time' in globals():
+                end_time = time_ns()
+                elapsed_ms = (end_time - globals()['start_time']) / 1000000
+                print(f"Execution time: {elapsed_ms:.4f}ms{os.linesep}")
+        except:
+            pass  # Silently continue if timing info isn't available
+    
+    # Perform any cleanup operations before exit
+    try:
+        # Flush any pending output
+        sys.stdout.flush()
+        sys.stderr.flush()
+    except:
+        pass  # Continue even if flush fails
+    
     sys.exit(exit_code)
 
 
@@ -210,18 +258,18 @@ def main():
             while True:
                 user_input = input(">> ").strip()
                 # Special tokens for user input
-                match user_input.lower():
-                    case "exit":
-                        raise KeyboardInterrupt
-                    case "clear":
-                        os.system("cls" if os.name == "nt" else "clear")
-                    case "cls":
-                        os.system(
-                            "cls" if os.name == "nt" else "clear"
-                        )  # Yeah yeah I know DRY!!
-                        user_input = "clear"
-                    case _:
-                        pass
+                lower_input = user_input.lower()
+                if lower_input == "exit":
+                    raise KeyboardInterrupt
+                elif lower_input == "clear":
+                    os.system("cls" if os.name == "nt" else "clear")
+                elif lower_input == "cls":
+                    os.system(
+                        "cls" if os.name == "nt" else "clear"
+                    )  # Yeah yeah I know DRY!!
+                    user_input = "clear"
+                else:
+                    pass
                 # Send everything else to the chat completion
                 reply: str | None = chatCompletionHandler(
                     client, SYSTEM_PROMPT, user_input, model=INTERACTIVE_MODEL
@@ -232,6 +280,8 @@ def main():
             reply: str | None = chatCompletionHandler(client, SYSTEM_PROMPT, user_input)
             printReply(reply)
             printTokens(user_input, reply)
+            # Non-interactive mode completed successfully
+            return  # Let the main execution handler show timing and exit
 
     except KeyboardInterrupt:
         # Easter-egg prevent exiting for a few seconds
@@ -247,21 +297,29 @@ def main():
                     os.linesep, os.linesep
                 )
             )
-            exitHandler(0)
+            exitHandler(130, "ProtAI interrupted by user (with humor)")
         else:
             print("{}[ProtAI]: Exiting.....{}".format(os.linesep * 2, os.linesep))
-            exitHandler(0)
+            exitHandler(130, "ProtAI interrupted by user")
     except Exception as e:
-        print(f"{os.linesep}An error occurred: {e}{os.linesep}")
-        exitHandler(1)
+        exitHandler(1, f"An error occurred: {e}")
 
 
 if __name__ == "__main__":
     from time import time_ns
-
-    start_time = time_ns()
-    main()
-    end_time = time_ns()
-    print(
-        f"{os.linesep * 2}GROQ Time taken: {(end_time - start_time)/1000000:.4f}ms{os.linesep * 2}"
-    )
+    
+    # Store start time globally so exit handler can access it
+    globals()['start_time'] = time_ns()
+    
+    try:
+        main()
+        # If main() completes successfully, show timing and exit gracefully
+        end_time = time_ns()
+        elapsed_ms = (end_time - globals()['start_time']) / 1000000
+        exitHandler(0, f"ProtAI completed successfully in {elapsed_ms:.4f}ms")
+    except SystemExit:
+        # Re-raise SystemExit to allow normal exit handling
+        raise
+    except Exception as e:
+        # Catch any unhandled exceptions from main()
+        exitHandler(1, f"Unexpected error in main execution: {e}")
