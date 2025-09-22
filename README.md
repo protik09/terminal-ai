@@ -37,19 +37,11 @@ protai <query>
 >[!IMPORTANT]
 > You need to have a _**valid Groq AI API key**_ to use this application.
 
-The application is using the _**llama-3.1-8b-instant**_ model for its instant inference, as that has the fastest response time.
-The interactive version is using the  **llama-3.3-70b-versatile** for its 0-shot inference.
+The application uses the following models:
 
-## Project Details & Models
+- **Instant Mode:** `llama-3.3-70b-versatile` for fast, zero-shot inference.
 
-- **Instant Mode:** Uses `llama-3.3-70b-versatile` for fast, zero-shot inference.
-- **Interactive Mode:** Uses `openai/gpt-oss-120b` for multi-turn, zero-shot inference.
-- **API Key Management:** Securely handled via `keyring` (never stored in plaintext).
-- **Terminal Output:** Uses `rich` for Markdown rendering and `texteffects.py` for colored banners/messages.
-- **Token Counting:** Uses `tiktoken` to display input/output token counts.
-- **Markdown Detection:** Replies are auto-detected for Markdown formatting.
-- **Error Handling:** All errors and exit messages use colored formatting.
-- **WSL2 Support:** Not supported due to keyring issues.
+- **Interactive Mode:** `openai/gpt-oss-120b` for multi-turn, zero-shot inference.
 
 ## Development
 
@@ -89,7 +81,11 @@ python setup.py upload
 
 ### Prerequisites
 
+> - Python 3.9 or later 🐍
+> - Groq AI API key (available at [Groq AI website](https://console.groq.com/keys))
+
 > [!NOTE]
+>
 > - Python 3.9 or later 🐍
 > - Groq AI API key (available at [Groq AI website](https://console.groq.com/keys))
 

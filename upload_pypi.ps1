@@ -1,6 +1,9 @@
 # Modern PyPI upload script for protai
 # Usage: Run this script from the project root after updating your code and version.
 
+# Update README model references to match protai/protai.py
+python update_readme_models.py
+
 # Clean old build artifacts
 Remove-Item -Recurse -Force dist, build, protai.egg-info -ErrorAction SilentlyContinue
 
