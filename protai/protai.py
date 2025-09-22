@@ -42,9 +42,11 @@ def versionHandler() -> None:
     print(__version__)
     exitHandler(0)
 
+
 def check_for_updates() -> None:
     """Check if a newer version is available on GitHub."""
     import requests
+
     try:
         response = requests.get(
             "https://api.github.com/repos/protik09/terminal-ai/tags"
@@ -66,14 +68,14 @@ def check_for_updates() -> None:
 def exitHandler(exit_code: int, message: str = None, show_timing: bool = False) -> None:
     """
     Comprehensive exit handler that provides graceful shutdown with contextual messaging.
-    
+
     Args:
         exit_code (int): The exit code to use (0 for success, non-zero for errors)
         message (str, optional): Custom exit message to display
         show_timing (bool): Whether to show timing information (for main execution)
     """
     from texteffects import successString, errorString, warningString
-    
+
     # Default messages based on exit code
     if message is None:
         if exit_code == 0:
@@ -84,7 +86,7 @@ def exitHandler(exit_code: int, message: str = None, show_timing: bool = False) 
             message = "ProtAI interrupted by user"
         else:
             message = f"ProtAI exited with code {exit_code}"
-    
+
     # Display appropriate exit message with formatting
     if exit_code == 0:
         print(f"{os.linesep}{successString(message)}{os.linesep}")
@@ -92,19 +94,20 @@ def exitHandler(exit_code: int, message: str = None, show_timing: bool = False) 
         print(f"{os.linesep}{errorString(message)}{os.linesep}")
     else:  # Other codes (warnings, interruptions, etc.)
         print(f"{os.linesep}{warningString(message)}{os.linesep}")
-    
+
     # Show timing information if requested (mainly for main execution completion)
     if show_timing:
         try:
             # Try to get timing info if available in global scope
             from time import time_ns
-            if 'start_time' in globals():
+
+            if "start_time" in globals():
                 end_time = time_ns()
-                elapsed_ms = (end_time - globals()['start_time']) / 1000000
+                elapsed_ms = (end_time - globals()["start_time"]) / 1000000
                 print(f"Execution time: {elapsed_ms:.4f}ms{os.linesep}")
         except (KeyError, ImportError, NameError, AttributeError):
             pass  # Silently continue if timing info isn't available
-    
+
     # Perform any cleanup operations before exit
     try:
         # Flush any pending output
@@ -112,7 +115,7 @@ def exitHandler(exit_code: int, message: str = None, show_timing: bool = False) 
         sys.stderr.flush()
     except (OSError, IOError):
         pass  # Continue even if flush fails
-    
+
     sys.exit(exit_code)
 
 
@@ -307,15 +310,15 @@ def main():
 
 if __name__ == "__main__":
     from time import time_ns
-    
+
     # Store start time globally so exit handler can access it
-    globals()['start_time'] = time_ns()
-    
+    globals()["start_time"] = time_ns()
+
     try:
         main()
         # If main() completes successfully, show timing and exit gracefully
         end_time = time_ns()
-        elapsed_ms = (end_time - globals()['start_time']) / 1000000
+        elapsed_ms = (end_time - globals()["start_time"]) / 1000000
         exitHandler(0, f"ProtAI completed successfully in {elapsed_ms:.4f}ms")
     except SystemExit:
         # Re-raise SystemExit to allow normal exit handling
