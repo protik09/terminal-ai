@@ -110,7 +110,7 @@ def exitHandler(exit_code: int, message: str = None, show_timing: bool = False) 
         # Flush any pending output
         sys.stdout.flush()
         sys.stderr.flush()
-    except:
+    except (OSError, IOError):
         pass  # Continue even if flush fails
     
     sys.exit(exit_code)
