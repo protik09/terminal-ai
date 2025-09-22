@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import annotations
 import sys
+from colorama import init
 import os
 import argparse
 import tiktoken
@@ -8,8 +9,12 @@ from rich import print
 from rich.markdown import Markdown
 from typing import Optional
 
+
+import requests
+import json
+import time
 # from groq import Groq, GroqError
-from mygroq import Groq, GroqError
+from mygroq import Groq
 from auth import authGroq, changeApiKey, deleteApiKey
 
 from __init__ import __version__  # noqa: F401
@@ -35,6 +40,48 @@ SYSTEM_PROMPT: str = (
 NOTE: str = (
     "**Note**: All inputs are 0-shot prompts. There is no multi-turn conversation."
 )
+
+# Model list cache settings
+MODEL_CACHE_PATH = os.path.join(os.path.dirname(__file__), 'models.json')
+MODEL_CACHE_MAX_AGE = 86400  # 24 hours in seconds
+
+def fetch_groq_models(api_key):
+    url = 'https://api.groq.com/openai/v1/models'
+    headers = {'Authorization': f'Bearer {api_key}'}
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        return [m['id'] for m in data.get('data', [])]
+    except requests.exceptions.RequestException as e:
+        print(f"[ProtAI]: Network error while fetching model list: {e}", file=sys.stderr)
+        return []
+    except Exception as e:
+        print(f"[ProtAI]: Unexpected error fetching model list: {e}", file=sys.stderr)
+        return []
+
+def load_cached_models():
+    if not os.path.exists(MODEL_CACHE_PATH):
+        return None, 0
+    try:
+        with open(MODEL_CACHE_PATH, 'r', encoding='utf-8') as f:
+            cache = json.load(f)
+        return cache.get('models', []), cache.get('timestamp', 0)
+    except Exception:
+        return None, 0
+
+def save_model_cache(models):
+    cache = {'models': models, 'timestamp': int(time.time())}
+    with open(MODEL_CACHE_PATH, 'w', encoding='utf-8') as f:
+        json.dump(cache, f)
+
+def get_valid_models(api_key):
+    models, timestamp = load_cached_models()
+    now = int(time.time())
+    if not models or now - timestamp > MODEL_CACHE_MAX_AGE:
+        models = fetch_groq_models(api_key)
+        save_model_cache(models)
+    return models
 
 
 def versionHandler() -> None:
@@ -65,6 +112,7 @@ def check_for_updates() -> None:
         print(f"[ProtAI]: Failed to check for updates: {e}")
 
 
+init(autoreset=True)
 def exitHandler(exit_code: int, message: str = None, show_timing: bool = False) -> None:
     """
     Comprehensive exit handler that provides graceful shutdown with contextual messaging.
@@ -74,12 +122,11 @@ def exitHandler(exit_code: int, message: str = None, show_timing: bool = False) 
         message (str, optional): Custom exit message to display
         show_timing (bool): Whether to show timing information (for main execution)
     """
-    from texteffects import successString, errorString, warningString
-
     # Default messages based on exit code
     if message is None:
         if exit_code == 0:
             message = "ProtAI completed successfully"
+            pass
         elif exit_code == 1:
             message = "ProtAI encountered an error"
         elif exit_code == 130:  # SIGINT (Ctrl+C)
@@ -89,11 +136,13 @@ def exitHandler(exit_code: int, message: str = None, show_timing: bool = False) 
 
     # Display appropriate exit message with formatting
     if exit_code == 0:
-        print(f"{os.linesep}{successString(message)}{os.linesep}")
+        pass
+        print(f"{os.linesep}")
+        # print(f"{os.linesep}{successString(message)}{os.linesep}")
     elif exit_code in [1, 2]:  # Error codes
-        print(f"{os.linesep}{errorString(message)}{os.linesep}")
+        print(f"{os.linesep}{message}{os.linesep}")
     else:  # Other codes (warnings, interruptions, etc.)
-        print(f"{os.linesep}{warningString(message)}{os.linesep}")
+        print(f"{os.linesep}{message}{os.linesep}")
 
     # Show timing information if requested (mainly for main execution completion)
     if show_timing:
@@ -224,9 +273,22 @@ def argParser() -> tuple[Optional[str], argparse.Namespace]:
     parser.add_argument(
         "-d", "--delete", action="store_true", help="Delete the current API key"
     )
+    parser.add_argument(
+        "-m", "--model", type=str, help="Specify the GROQ model to use (see available models with --list-models)"
+    )
+    parser.add_argument(
+        "--list-models", action="store_true", help="List available GROQ models"
+    )
     args = parser.parse_args()
     _user_input: Optional[str] = None
 
+    if args.list_models:
+        api_key = authGroq()
+        models = get_valid_models(api_key)
+        print("[ProtAI]: Available models:")
+        for m in models:
+            print(f"  - {m}")
+        exitHandler(0)
     if not args.version and not args.change and len(sys.argv) < 2:
         print(f"{os.linesep}Usage: protai <user input> -> For Single line input")
         print(f"Usage: protai -i -> For Interactive mode{os.linesep}")
@@ -236,11 +298,10 @@ def argParser() -> tuple[Optional[str], argparse.Namespace]:
     elif args.delete:
         deleteApiKey()
     elif args.change:
-        print("{os.linesep}Change the API key for the GROQ API.{os.linesep}")
+        print(f"{os.linesep}Change the API key for the GROQ API.{os.linesep}")
         exitHandler(changeApiKey())
     else:
         _user_input = " ".join(args.user_input)
-        # print(f"[DEBUG] User input is: {user_input}")
     return (_user_input, args)
 
 
@@ -248,43 +309,58 @@ def main():
     user_input, args = argParser()
     # Main business logic
     # Set the query parameters
-    try:
-        client = Groq(api_key=authGroq())
-    except GroqError:  # Catch any errors from the Groq class
-        print("An error occurred when authenticating with the GROQ API.")
 
     try:
+        api_key = authGroq()
+        client = Groq(api_key=api_key)
+        valid_models = get_valid_models(api_key)
+        # Determine model to use
+        requested_model = args.model
+        if not valid_models:
+            print("[ProtAI]: No valid models available from GROQ API. Please check your API key or network connection.")
+            exitHandler(1, "No valid models available.")
+        if requested_model:
+            if requested_model in valid_models:
+                chosen_model = requested_model
+            else:
+                print(f"[ProtAI]: Requested model '{requested_model}' is not available. Using '{valid_models[0] if valid_models else INSTANT_MODEL}' instead.")
+                chosen_model = valid_models[0] if valid_models else INSTANT_MODEL
+        else:
+            # Choose models for instant/interactive
+            instant_model = INSTANT_MODEL if INSTANT_MODEL in valid_models else valid_models[0] if valid_models else INSTANT_MODEL
+            interactive_model = INTERACTIVE_MODEL if INTERACTIVE_MODEL in valid_models else valid_models[0] if valid_models else INSTANT_MODEL
+        if not requested_model:
+            if INSTANT_MODEL not in valid_models:
+                print(f"[ProtAI]: Requested instant model '{INSTANT_MODEL}' is not available. Using '{instant_model}' instead.")
+            if INTERACTIVE_MODEL not in valid_models:
+                print(f"[ProtAI]: Requested interactive model '{INTERACTIVE_MODEL}' is not available. Using '{interactive_model}' instead.")
+
         if args.interactive:
             print(os.linesep)
             print(Markdown(NOTE))
             print(os.linesep)
+            print(f"Model in use -> {chosen_model if requested_model else interactive_model}{os.linesep}")
             while True:
                 user_input = input(">> ").strip()
-                # Special tokens for user input
                 lower_input = user_input.lower()
                 if lower_input == "exit":
                     raise KeyboardInterrupt
                 elif lower_input == "clear":
                     os.system("cls" if os.name == "nt" else "clear")
                 elif lower_input == "cls":
-                    os.system(
-                        "cls" if os.name == "nt" else "clear"
-                    )  # Yeah yeah I know DRY!!
+                    os.system("cls" if os.name == "nt" else "clear")
                     user_input = "clear"
                 else:
                     pass
-                # Send everything else to the chat completion
                 reply: str | None = chatCompletionHandler(
-                    client, SYSTEM_PROMPT, user_input, model=INTERACTIVE_MODEL
+                    client, SYSTEM_PROMPT, user_input, model=chosen_model if requested_model else interactive_model
                 )
                 printReply(reply)
-                # printTokens(user_input, reply)
         else:
-            reply: str | None = chatCompletionHandler(client, SYSTEM_PROMPT, user_input)
+            reply: str | None = chatCompletionHandler(client, SYSTEM_PROMPT, user_input, model=chosen_model if requested_model else instant_model)
             printReply(reply)
             printTokens(user_input, reply)
-            # Non-interactive mode completed successfully
-            return  # Let the main execution handler show timing and exit
+            return
 
     except KeyboardInterrupt:
         # Easter-egg prevent exiting for a few seconds

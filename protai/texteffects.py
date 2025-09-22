@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+
+from colorama import Fore, Style
 
 
 def checkBgColor() -> None: ...
@@ -31,27 +32,27 @@ def overwritePrevLine(text: str = "") -> str:
 
 
 def greenString(success_string: str = "") -> str:
-    return f"\x1b[1;32m{success_string}\x1b[0m"
+    return f"{Fore.GREEN}{success_string}{Style.RESET_ALL}"
 
 
 def redString(failure_string: str = "") -> str:
-    return f"\x1b[1;31m{failure_string}\x1b[0m"
+    return f"{Fore.RED}{failure_string}{Style.RESET_ALL}"
 
 
 def yellowString(caution_string: str = "") -> str:
-    return f"\x1b[1;33m{caution_string}\x1b[0m"
+    return f"{Fore.YELLOW}{caution_string}{Style.RESET_ALL}"
 
 
 def successString(success_string: str = "") -> str:
-    return f"\x1b[1;32m[ ✔ ]  {success_string}\x1b[0m"
+    return f"{Fore.GREEN}[ ✔ ]  {success_string}{Style.RESET_ALL}"
 
 
 def errorString(failure_string: str = "") -> str:
-    return f"\x1b[1;31m[ ✘ ]  {failure_string}\x1b[0m"
+    return f"{Fore.RED}[ ✘ ]  {failure_string}{Style.RESET_ALL}"
 
 
 def warningString(caution_string: str = "") -> str:
-    return f"\x1b[1;33m[!]  {caution_string}\x1b[0m"
+    return f"{Fore.YELLOW}[!]  {caution_string}{Style.RESET_ALL}"
 
 
 if __name__ == "__main__":

@@ -7,6 +7,7 @@ Author: Protik Banerji <protik09@users.noreply.github.com>
 """
 
 import os
+from colorama import init
 import re
 import keyring
 import keyring.errors
@@ -20,6 +21,7 @@ KEYRING_USER: str = "api-key"
 API_KEY_MIN_SIZE: int = 30
 API_KEY_MAX_SIZE: int = 1024
 
+init(autoreset=True)
 def _version() -> None:
     """Check version of ProtAI"""
     from __init__ import __version__
@@ -94,9 +96,6 @@ def deleteApiKey() -> None:
         try:
             del os.environ["GROQ_API_KEY"]
         except KeyError:
-            #             print(
-            #                 "[KeyringError]: Failed to delete password in os.environ. \
-            # It's ok though you can still overwrite it." )
             pass
         print(successString("API key deleted"))
     else:  # If keyring is not available
