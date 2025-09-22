@@ -41,8 +41,24 @@ NOTE: str = (
     "**Note**: All inputs are 0-shot prompts. There is no multi-turn conversation."
 )
 
+
 # Model list cache settings
-MODEL_CACHE_PATH = os.path.join(os.path.dirname(__file__), 'models.json')
+def get_cache_dir():
+    """Return a user-writable cache directory path for ProtAI."""
+    if os.name == "nt":
+        # Windows: Use %APPDATA%\protai
+        appdata = os.getenv("APPDATA")
+        if appdata:
+            cache_dir = os.path.join(appdata, "protai")
+        else:
+            cache_dir = os.path.expanduser(r"~\\.protai")
+    else:
+        # Linux/macOS: Use ~/.cache/protai
+        cache_dir = os.path.join(os.path.expanduser("~/.cache"), "protai")
+    os.makedirs(cache_dir, exist_ok=True)
+    return cache_dir
+
+MODEL_CACHE_PATH = os.path.join(get_cache_dir(), 'models.json')
 MODEL_CACHE_MAX_AGE = 86400  # 24 hours in seconds
 
 def fetch_groq_models(api_key):
