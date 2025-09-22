@@ -39,12 +39,23 @@ protai <query>
 >[!IMPORTANT]
 > You need to have a _**valid Groq AI API key**_ to use this application.
 
-## Development
-
 The application is using the _**llama-3.1-8b-instant**_ model for its instant inference, as that has the fastest response time.
 The interactive version is using the  **llama-3.3-70b-versatile** for its 0-shot inference.
 
-If you wish to develop for this application, you can clone the repository and install the dependencies using the scripts given:
+## Project Details & Models
+
+- **Instant Mode:** Uses `llama-3.3-70b-versatile` for fast, zero-shot inference.
+- **Interactive Mode:** Uses `openai/gpt-oss-120b` for multi-turn, zero-shot inference.
+- **API Key Management:** Securely handled via `keyring` (never stored in plaintext).
+- **Terminal Output:** Uses `rich` for Markdown rendering and `texteffects.py` for colored banners/messages.
+- **Token Counting:** Uses `tiktoken` to display input/output token counts.
+- **Markdown Detection:** Replies are auto-detected for Markdown formatting.
+- **Error Handling:** All errors and exit messages use colored formatting.
+- **WSL2 Support:** Not supported due to keyring issues.
+
+## Development
+
+To develop for this application, clone the repository and install dependencies using the provided scripts:
 
 ```bash
 git clone https://github.com/protik09/terminal-ai.git
@@ -69,11 +80,21 @@ python setup.py upload
 > [!IMPORTANT]
 > Only the current maintainer has access to the [**PyPI**](https://pypi.org/project/protai/) repository API key. If you wish to contribute, please fork the repository and submit a pull request.
 
+## Key Files & Structure
+
+- `protai/protai.py`: CLI entry, argument parsing, main logic, reply formatting, error handling.
+- `protai/auth.py`: API key storage, retrieval, validation, user prompts (uses `prompt-toolkit`).
+- `protai/mygroq.py`: GROQ API wrapper (uses `requests` and `orjson`).
+- `protai/texteffects.py`: Terminal output formatting.
+- `protai/ismarkdown.py`: Markdown detection for replies.
+- `protai/__init__.py` and `VERSION`: Version management.
+
 ### Prerequisites
 
->[!NOTE]
->* Python 3.10 or later 🐍
->* Groq AI API key (available at [Groq AI website](https://console.groq.com/keys))
+> [!NOTE]
+
+- Python 3.10 or later 🐍
+- Groq AI API key (available at [Groq AI website](https://console.groq.com/keys))
 
 ### Program Flow Chart
 
