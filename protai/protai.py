@@ -22,7 +22,7 @@ GROQ_API_URL: str = "https://api.groq.io/v1/query"
 
 # Models to use
 INSTANT_MODEL = "llama-3.3-70b-versatile"
-INTERACTIVE_MODEL = "deepseek-r1-distill-llama-70b-specdec"
+INTERACTIVE_MODEL = "openai/gpt-oss-120b"
 
 SYSTEM_PROMPT: str = (
     "You are an AI agent called ProtAI. You will reply succinctly to any input you receive. \
