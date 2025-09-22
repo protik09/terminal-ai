@@ -258,18 +258,18 @@ def main():
             while True:
                 user_input = input(">> ").strip()
                 # Special tokens for user input
-                match user_input.lower():
-                    case "exit":
-                        raise KeyboardInterrupt
-                    case "clear":
-                        os.system("cls" if os.name == "nt" else "clear")
-                    case "cls":
-                        os.system(
-                            "cls" if os.name == "nt" else "clear"
-                        )  # Yeah yeah I know DRY!!
-                        user_input = "clear"
-                    case _:
-                        pass
+                lower_input = user_input.lower()
+                if lower_input == "exit":
+                    raise KeyboardInterrupt
+                elif lower_input == "clear":
+                    os.system("cls" if os.name == "nt" else "clear")
+                elif lower_input == "cls":
+                    os.system(
+                        "cls" if os.name == "nt" else "clear"
+                    )  # Yeah yeah I know DRY!!
+                    user_input = "clear"
+                else:
+                    pass
                 # Send everything else to the chat completion
                 reply: str | None = chatCompletionHandler(
                     client, SYSTEM_PROMPT, user_input, model=INTERACTIVE_MODEL
