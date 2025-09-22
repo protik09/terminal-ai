@@ -29,9 +29,7 @@ protai <query>
 
 *For example:*
 
-![ProtAI Demo](https://github.com/protik09/terminal-ai/blob/master/assets/protai_demo.jpeg?raw=true "ProtAI Demo")
-
-
+![ProtAI Demo](https://github.com/protik09/terminal-ai/blob/main/assets/protai_demo.jpeg?raw=true "ProtAI Demo")
 
 >[!Note]
 > On first run you will be prompted to enter your **free** *Groq AI* API key. You can get one at the [**Groq AI website**](https://console.groq.com/keys).
@@ -92,9 +90,8 @@ python setup.py upload
 ### Prerequisites
 
 > [!NOTE]
-
-- Python 3.10 or later 🐍
-- Groq AI API key (available at [Groq AI website](https://console.groq.com/keys))
+> - Python 3.9 or later 🐍
+> - Groq AI API key (available at [Groq AI website](https://console.groq.com/keys))
 
 ### Program Flow Chart
 
