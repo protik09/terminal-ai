@@ -12,8 +12,11 @@ from shutil import rmtree
 from setuptools import find_packages, setup, Command
 
 # Open requirements.txt and read file into a list of strings
-with open("requirements.txt", "r") as file:
-    requirements = file.read().splitlines()
+try:
+    with open("requirements.txt", "r") as file:
+        requirements = file.read().splitlines()
+except FileNotFoundError:
+    requirements = []
 
 # Package meta-data.
 NAME = "protai"
@@ -90,8 +93,8 @@ class UploadCommand(Command):
         except OSError:
             pass
 
-        self.status("Building Source and Wheel (universal) distribution…")
-        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
+        self.status("Building Source and Wheel distribution…")
+        os.system("{0} setup.py sdist bdist_wheel".format(sys.executable))
 
         self.status("Uploading the package to PyPI via Twine…")
         os.system("twine upload dist/*")  # Upload directly to main PyPi
@@ -125,11 +128,11 @@ setup(
     package_data={
         "protai": ["VERSION"],  # Include the VERSION file
     },
+    data_files=[("", ["requirements.txt"])],
     license="MIT",
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-        "License :: OSI Approved :: MIT License",
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.10",
