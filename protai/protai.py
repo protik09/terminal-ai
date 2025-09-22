@@ -102,7 +102,7 @@ def exitHandler(exit_code: int, message: str = None, show_timing: bool = False) 
                 end_time = time_ns()
                 elapsed_ms = (end_time - globals()['start_time']) / 1000000
                 print(f"Execution time: {elapsed_ms:.4f}ms{os.linesep}")
-        except:
+        except (KeyError, ImportError, NameError, AttributeError):
             pass  # Silently continue if timing info isn't available
     
     # Perform any cleanup operations before exit
